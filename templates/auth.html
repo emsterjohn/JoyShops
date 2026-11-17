@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}{{ 'Create account' if mode=='signup' else 'Welcome back' }}{% endblock %}{% block content %}
+<div class="auth-card-wrap"><section class="auth-visual"><a class="logo logo-light" href="{{ url_for('login') }}">joy<span>shop</span><i>✿</i></a><div class="visual-copy"><span class="eyebrow">YOUR STYLE, YOUR JOY</span><h1>Find your joy in every little thing.</h1><p>Everyday fashion, lovely finds, and little details that make you feel good.</p><div class="visual-emoji">👜　👟　🎀</div></div><div class="visual-bottom">FASHION · STYLE · EVERYDAY JOY</div></section>
+<section class="auth-form-side"><div class="auth-form">
+<div class="mobile-logo"><a class="logo" href="{{ url_for('login') }}">joy<span>shop</span><i>✿</i></a></div>
+<span class="eyebrow pink-eyebrow">{{ 'JOIN THE COMMUNITY' if mode=='signup' else 'WELCOME TO JOYSHOP' }}</span><h2>{{ 'Create your account' if mode=='signup' else 'Welcome back!' }}</h2><p class="muted">{{ 'Create an account and discover your new favorites.' if mode=='signup' else 'Log in to continue your shopping experience.' }}</p>
+<form method="post" class="form-stack"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{% if mode=='signup' %}<label>Full name<input name="name" required autocomplete="name" placeholder="Enter your full name"></label>{% endif %}
+<label>Email address<input name="email" type="email" required autocomplete="email" placeholder="you@example.com"></label>
+<label>Password<input name="password" type="password" required minlength="{{ 8 if mode=='signup' else 1 }}" autocomplete="{{ 'new-password' if mode=='signup' else 'current-password' }}" placeholder="{{ 'At least 8 characters' if mode=='signup' else 'Enter your password' }}"></label>
+<button class="btn btn-primary btn-block">{{ 'Create account' if mode=='signup' else 'Log in' }} <span>→</span></button></form>
+<p class="auth-switch">{{ 'Already have an account?' if mode=='signup' else 'New to JoyShop?' }} <a href="{{ url_for('login' if mode=='signup' else 'signup') }}">{{ 'Log in' if mode=='signup' else 'Create an account' }}</a></p>
+{% if mode=='login' %}<div class="demo-note"><b>Admin demo account</b><span>Email: admin@joyshop.com</span><span>Password: admin123</span><small>Change these credentials before publishing your shop.</small></div>{% endif %}
+</div></section></div>{% endblock %}

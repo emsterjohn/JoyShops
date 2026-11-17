@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% block title %}Checkout{% endblock %}{% block content %}
+<div class="page-heading"><span class="eyebrow pink-eyebrow">ALMOST YOURS</span><h1>Checkout</h1><p class="muted">Add your delivery details and choose how you would like to pay.</p></div>
+<form class="checkout-layout" method="post" action="{{ url_for('checkout') }}" id="checkoutForm">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<section class="content-card checkout-form-card">
+<div class="checkout-section-title"><span class="checkout-step">1</span><div><h2>Delivery information</h2><p>Where should we send your order?</p></div></div>
+<div class="form-stack">
+<label>Full name *<input name="full_name" autocomplete="name" required placeholder="Name of receiver"></label>
+<div class="form-grid"><label>Mobile number *<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="09XX XXX XXXX"></label><label>Postal code<input name="postal_code" inputmode="numeric" autocomplete="postal-code" placeholder="Postal code"></label></div>
+<label>House number, street, or sitio *<input name="address" autocomplete="street-address" required placeholder="House no., street, subdivision"></label>
+<div class="form-grid"><label>Barangay *<input name="barangay" required placeholder="Barangay"></label><label>Municipality / City *<input name="city" autocomplete="address-level2" required placeholder="Municipality or city"></label></div>
+<label>Province *<input name="province" autocomplete="address-level1" required placeholder="Province"></label>
+</div>
+<div class="checkout-divider"></div>
+<div class="checkout-section-title"><span class="checkout-step">2</span><div><h2>Payment method</h2><p>Select your preferred payment option.</p></div></div>
+<div class="payment-options">
+<label class="payment-option"><input type="radio" name="payment_method" value="COD" checked><span class="payment-symbol">💵</span><span><b>Cash on Delivery</b><small>Pay when your order arrives</small></span><i>✓</i></label>
+<label class="payment-option"><input type="radio" name="payment_method" value="GCASH"><span class="payment-symbol">📱</span><span><b>GCash</b><small>Prototype payment selection</small></span><i>✓</i></label>
+<label class="payment-option"><input type="radio" name="payment_method" value="MAYA"><span class="payment-symbol">💚</span><span><b>Maya</b><small>Prototype payment selection</small></span><i>✓</i></label>
+</div>
+<div id="ewalletDetails" class="ewallet-details" hidden><b>Digital wallet details</b><p>This is a prototype. No money will be transferred. Enter a sample account name or reference note to continue.</p><label>Account name / reference note<input name="payment_note" id="paymentNote" placeholder="Enter sample details" autocomplete="off"></label></div>
+<p class="checkout-safe-note">🔒 Your details are used only to prepare this prototype order.</p>
+</section>
+<aside class="content-card order-summary"><h2>Order summary</h2><div class="summary-items">{% for item in items %}<div class="summary-item"><span class="summary-emoji">{{ item.product.emoji }}</span><div><b>{{ item.product.name }}</b><small>Qty: {{ item.quantity }}</small></div><strong>₱{{ '%.2f'|format(item.subtotal) }}</strong></div>{% endfor %}</div><div class="summary-total"><span>Total</span><strong>₱{{ '%.2f'|format(total) }}</strong></div><button class="btn btn-primary btn-block checkout-submit" type="submit">Confirm order <span>→</span></button><a class="checkout-back" href="{{ url_for('cart') }}">← Back to cart</a><small class="prototype-disclaimer">Demo checkout only · No real payment processing</small></aside>
+</form>
+<script>
+(function(){const radios=document.querySelectorAll('input[name="payment_method"]');const box=document.getElementById('ewalletDetails');const note=document.getElementById('paymentNote');function update(){const selected=document.querySelector('input[name="payment_method"]:checked');const digital=selected&&selected.value!=='COD';box.hidden=!digital;note.required=!!digital;}radios.forEach(r=>r.addEventListener('change',update));update();})();
+</script>
+{% endblock %}

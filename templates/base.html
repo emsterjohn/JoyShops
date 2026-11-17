@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}JoyShop{% endblock %} · JoyShop</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"></head><body>
+{% if current_user %}<header class="topbar"><a class="logo" href="{{ url_for('index') }}">joy<span>shop</span><i>✿</i></a><div class="top-right"><span class="welcome-user">{{ current_user.name }} <small>{{ current_user.role|title }}</small></span><form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline btn-sm">Log out</button></form></div></header>
+<div class="app-shell"><aside class="sidebar"><div class="side-caption">WORKSPACE</div>{% if current_user.role=='admin' %}
+<a class="side-link {{ 'active' if request.endpoint=='admin_dashboard' }}" href="{{ url_for('admin_dashboard') }}"><span>▦</span> Overview</a>
+<a class="side-link {{ 'active' if request.endpoint in ['admin_products','product_form'] }}" href="{{ url_for('admin_products') }}"><span>◇</span> Products</a>
+<a class="side-link {{ 'active' if request.endpoint in ['admin_orders','update_order_status'] }}" href="{{ url_for('admin_orders') }}"><span>▤</span> Orders</a>
+<a class="side-link {{ 'active' if request.endpoint=='admin_customers' }}" href="{{ url_for('admin_customers') }}"><span>♙</span> Customers</a>
+{% else %}
+<a class="side-link {{ 'active' if request.endpoint=='shop' }}" href="{{ url_for('shop') }}"><span>⌂</span> Shop</a>
+<a class="side-link {{ 'active' if request.endpoint=='cart' }}" href="{{ url_for('cart') }}"><span>🛍</span> My cart</a>
+<a class="side-link {{ 'active' if request.endpoint=='my_orders' }}" href="{{ url_for('my_orders') }}"><span>▤</span> My orders</a>
+{% endif %}
+<div class="sidebar-note"><div class="note-icon">♡</div><b>A little joy, every day.</b><p>Find pieces that make you feel like you.</p></div></aside><main class="main-content">
+{% else %}<main class="auth-layout">{% endif %}
+{% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}<button onclick="this.parentElement.remove()">×</button></div>{% endfor %}</div>{% endif %}{% endwith %}
+{% block content %}{% endblock %}</main>{% if current_user %}</div>{% endif %}
+<footer class="footer">© {{ year }} JoyShop · Made with <span>♥</span> for your everyday style</footer></body></html>

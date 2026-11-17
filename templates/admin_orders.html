@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <span class="eyebrow pink-eyebrow">SALES MANAGEMENT</span>
+  <h1>Customer orders</h1>
+  <p class="muted">Review purchases and keep customers updated. Completed or cancelled orders can be removed from this list without deleting the order record.</p>
+</div>
+<div class="content-card">
+  {% if orders %}
+  <div class="table-scroll">
+    <table class="data-table">
+      <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Payment / delivery</th><th>Update status</th><th>Action</th></tr></thead>
+      <tbody>
+      {% for o in orders %}
+        <tr>
+          <td><b>#JS-{{ '%05d'|format(o.id) }}</b></td>
+          <td><b>{{ o.customer_name }}</b><small class="table-sub">{{ o.email }}</small></td>
+          <td>{{ o.created_at }}</td>
+          <td class="strong-pink">₱{{ '%.2f'|format(o.total) }}</td>
+          <td>{{ o.payment_method or 'COD' }}<small class="table-sub">{{ o.phone }}</small><small class="table-sub">{{ o.address }}</small><small class="table-sub">{{ o.payment_note }}</small></td>
+          <td><form class="status-form" method="post" action="{{ url_for('update_order_status',order_id=o.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><select name="status">{% for s in ['Processing','Shipped','Completed','Cancelled'] %}<option {{ 'selected' if o.status==s }}>{{ s }}</option>{% endfor %}</select><button class="btn btn-soft btn-xs">Save</button></form></td>
+          <td>
+            {% if o.status in ['Completed', 'Cancelled'] %}
+            <form method="post" action="{{ url_for('hide_admin_order', order_id=o.id) }}" onsubmit="return confirm('Remove this order from the admin order list?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-danger btn-xs" type="submit">Remove</button>
+            </form>
+            {% else %}<span class="table-sub">Not available</span>{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><div>▤</div><h2>No orders to show</h2><p>New customer orders will appear here.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

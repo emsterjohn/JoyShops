@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: joyshop
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JOYSHOP_DB
+        value: /var/data/joyshop.db
+      - key: ADMIN_EMAIL
+        value: admin@joyshop.com
+      - key: ADMIN_PASSWORD
+        sync: false
+    disk:
+      name: joyshop-data
+      mountPath: /var/data
+      sizeGB: 1

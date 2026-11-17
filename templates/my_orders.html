@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <span class="eyebrow pink-eyebrow">YOUR JOYSHOP ACTIVITY</span>
+  <h1>My orders</h1>
+  <p class="muted">Keep track of your purchases and order updates. You can remove completed or cancelled orders from this list.</p>
+</div>
+<div class="content-card">
+  {% if orders %}
+  <div class="table-scroll">
+    <table class="data-table">
+      <thead><tr><th>Order</th><th>Date</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+      {% for o in orders %}
+        <tr>
+          <td><b>#JS-{{ '%05d'|format(o.id) }}</b></td>
+          <td>{{ o.created_at }}</td>
+          <td>{% for item in order_items[o.id] %}<div>{{ item.product_name }} × {{ item.quantity }}</div>{% endfor %}</td>
+          <td class="strong-pink">₱{{ '%.2f'|format(o.total) }}</td>
+          <td>{{ o.payment_method or 'COD' }}<small class="table-sub">{{ o.payment_note }}</small></td>
+          <td><span class="status-badge {{ o.status|lower|replace(' ', '-') }}">{{ o.status }}</span></td>
+          <td>
+            {% if o.status in ['Completed', 'Cancelled'] %}
+            <form method="post" action="{{ url_for('hide_customer_order', order_id=o.id) }}" onsubmit="return confirm('Remove this order from your order history?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-danger btn-xs" type="submit">Remove</button>
+            </form>
+            {% else %}<span class="table-sub">Not available</span>{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><div>♡</div><h2>No orders to show</h2><p>Your active and recent purchases will appear here.</p><a class="btn btn-primary" href="{{ url_for('shop') }}">Start shopping</a></div>
+  {% endif %}
+</div>
+{% endblock %}
